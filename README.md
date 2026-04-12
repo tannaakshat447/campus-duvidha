@@ -1,70 +1,31 @@
-# 🎓 Campus Duvidha Solver
+# 🎓 Campus Duvidha Solver (v2.0)
 
-> **AI-Powered Multi-Agent Complaint Management System for College Campuses**
+> **Advanced AI-Powered Multi-Agent Complaint Management System for Elite Educational Institutions.**
 
-A production-quality complaint management platform where student grievances are automatically classified, prioritized, summarized, routed, and sentiment-analyzed by a pipeline of 5 specialized AI agents.
+Built with a decoupled **React (Vite)** frontend and a **Flask (Python)** backend, this platform provides a professional-grade solution for managing student grievances using a production-ready AI pipeline of 5 specialized agents.
+
+---
+
+## ✨ Primary Evolution (v2.0)
+
+This project has evolved from a Streamlit prototype to a full-stack **Single Page Application (SPA)** with a focus on premium aesthetics, real-time feedback, and secure authorization.
+
+- 💎 **Premium UI/UX**: Custom glassmorphism design system built from scratch with Vanilla CSS.
+- ⚡ **Decoupled Architecture**: High-performance React frontend communicating with a RESTful Flask API.
+- 🔐 **Secure Access**: Student authentication restricted to college emails and PIN-gated Admin Dashboards.
+- 🤖 **AI Traceability**: Real-time visualization of multi-agent execution steps, including latency and raw logic.
 
 ---
 
 ## 🤖 Multi-Agent Pipeline Architecture
 
-This is NOT a single-LLM-call app. Every complaint goes through **5 independent AI agents**, each with a single responsibility:
+Every complaint is processed by a high-coordinated **Orchestrator** that chains 5 specialized agents:
 
-```
-Student Complaint
-      │
-      ▼
-┌──────────────────┐
-│   ORCHESTRATOR    │  ← Coordinates all agents, handles failures
-└──────────────────┘
-      │
-      ▼
-┌──────────────────┐
-│ Agent 1: CLASSIFY │  → Category + Confidence Score
-│   (classifier)    │    Infrastructure / Academic / Hostel & Mess /
-│                   │    Anti-Ragging / Administration / IT & Network
-└──────────────────┘
-      │
-      ▼
-┌──────────────────┐
-│ Agent 2: PRIORITY │  → Low / Medium / High / Urgent
-│   (priority)      │    + One-line justification
-│                   │    Hard rules: Anti-Ragging = ALWAYS Urgent
-└──────────────────┘
-      │
-      ▼
-┌──────────────────┐
-│ Agent 3: SUMMARIZE│  → Clean 1-line formal summary
-│   (summarizer)    │    Handles Hinglish, slang, bad grammar
-│                   │    "bhai paani nahi aata" → formal English
-└──────────────────┘
-      │
-      ▼
-┌──────────────────┐
-│ Agent 4: ROUTE    │  → Department name + routing reason
-│   (router)        │    Knows all departments & their mandates
-└──────────────────┘
-      │
-      ▼
-┌──────────────────┐
-│ Agent 5: SENTIMENT│  → Neutral / Frustrated / Distressed / Angry
-│   (sentiment)     │    Flags Distressed/Angry for admin alerts
-└──────────────────┘
-      │
-      ▼
-┌──────────────────┐
-│  AgentResult      │  → Saved to DB, shown in UI
-│  (dataclass)      │    All 5 agent outputs unified
-└──────────────────┘
-```
-
-### Key Design Decisions
-
-- **Each agent = 1 LLM call** with a dedicated system prompt
-- **Agents are chained**: Priority Agent receives Classifier's output, Router receives all prior outputs
-- **Graceful degradation**: If any agent fails, the orchestrator falls back to keyword heuristics
-- **Every agent logs**: input, output JSON, and latency to `agent_logs` table
-- **No API key?** The system works in fallback mode using keyword matching (~75% accuracy)
+1.  **Classifier Agent**: Groups the issue into standardized categories (Academic, Hostel, IT, etc.).
+2.  **Priority Agent**: Assesses urgency based on safety risks and institutional impact.
+3.  **Summarizer Agent**: Translates student descriptions (including Hinglish/slang) into formal summaries.
+4.  **Router Agent**: Maps the issue to the exact department responsible for resolution.
+5.  **Sentiment Agent**: Detects emotional distress or anger to flag urgent cases for immediate attention.
 
 ---
 
@@ -72,162 +33,107 @@ Student Complaint
 
 ```
 campus-duvidha-solver/
-├── app.py                      # Main Streamlit entry point
-├── config.py                   # Centralized configuration
-├── requirements.txt            # Python dependencies
-├── seed_data.py                # Pre-populate with 15 sample complaints
-├── .env.example                # Environment variable template
+├── server.py                   # Main Flask API & Static File Server
+├── config.py                   # Centralized Environment Configuration
+├── requirements.txt            # Python Dependencies
+├── .env                        # Environment Variables (OPENAI_API_KEY, etc.)
+│
+├── frontend/                   # React (Vite) Frontend Application
+│   ├── src/
+│   │   ├── components/         # Modular Dashboard & Auth Components
+│   │   ├── utils/              # API Clients & Shared Logic
+│   │   ├── App.jsx             # SPA Routing & Authentication
+│   │   └── index.css           # Custom Glassmorphism Design System
+│   └── dist/                   # Production build (served by Flask)
 │
 ├── database/
-│   ├── db.py                   # SQLite connection + schema init
-│   └── models.py               # CRUD helpers for all tables
+│   ├── db.py                   # SQLite Connection & Schema
+│   └── models.py               # Optimized CRUD Operations
 │
-├── agents/
-│   ├── orchestrator.py         # Master agent — runs full pipeline
-│   ├── classifier_agent.py     # Agent 1: category + confidence
-│   ├── priority_agent.py       # Agent 2: urgency level + reason
-│   ├── summarizer_agent.py     # Agent 3: formal 1-line summary
-│   ├── router_agent.py         # Agent 4: department + justification
-│   ├── sentiment_agent.py      # Agent 5: emotional tone + flag
-│   └── fallback.py             # Keyword heuristic fallback (~75%)
+├── agents/                     # Independent AI Agent Logic
+│   ├── orchestrator.py         # Master Pipeline Hub
+│   ├── classifier_agent.py     # Agent 1
+│   ├── ...                     # Agents 2-5
+│   └── fallback.py             # Keyword Heuristic Fallback
 │
-├── pages/
-│   ├── student_portal.py       # Submit complaints + see AI results
-│   ├── admin_dashboard.py      # Filter, manage, export, review logs
-│   ├── tracking.py             # Track complaint by ID with timeline
-│   └── analytics.py            # Plotly charts + agent performance
-│
-└── utils/
-    ├── notify.py               # In-app notification helpers
-    └── helpers.py              # Tracking IDs, CSS, badge rendering
+└── utils/                      # Helper modules (Mail, Notify, Helpers)
 ```
 
 ---
 
-## 🚀 Setup Instructions
+## 🚀 Setup & Installation
 
-### 1. Clone and Install
+### 1. Backend Setup (Flask)
 
 ```bash
-cd campus-duvidha-solver
+# Install dependencies
 pip install -r requirements.txt
+
+# Configure Environment
+# Add your OPENAI_API_KEY to .env
+# Set ADMIN_PIN (Default: Admin@123)
 ```
 
-### 2. Configure API Key
+### 2. Frontend Setup (React)
 
 ```bash
-# Copy the example env file
-cp .env.example .env
+cd frontend
+npm install
 
-# Edit .env and add your OpenAI API key
-# OPENAI_API_KEY=sk-your-actual-key-here
+# Run Development Server
+npm run dev
+
+# Build for Production
+npm run build
 ```
 
-> **No API key?** The app works in fallback mode with keyword-based heuristics.
+### 3. Running the Integrated App
 
-### 3. Seed Sample Data
+Once the frontend is built, you can run the entire application via the Flask server:
 
 ```bash
-python seed_data.py
+python server.py
+# Open http://localhost:5000 in your browser
 ```
 
-This inserts 15 realistic complaints across all categories, priorities, and sentiments — so the dashboard looks rich immediately.
+---
 
-### 4. Run the App
+## 💎 Features at a Glance
 
-```bash
-streamlit run app.py
-```
+### 📝 Student Ecosystem
+- **Personalized Portal**: Secure login for `@iiitranchi.ac.in` students.
+- **AI-Guided Submission**: Real-time feedback during the AI triage process.
+- **My Complaints**: Track historical data and current status of all your grievances.
+- **Public Tracker**: Instant lookup of any case via unique Tracking ID.
 
-The app will open at `http://localhost:8501`.
+### 🛡️ Admin Command Center
+- **Smart Filtering**: Search and filter thousands of tickets by category, priority, or status.
+- **Discussion Threads**: Direct communication channel between admins and students.
+- **Agent Traceability**: Inspect the raw outputs and performance of every AI agent per ticket.
+- **Analytics Engine**: Real-time Plotly charts for platform workload and department performance.
 
 ---
 
-## 🎯 Features
+## 🛠️ Technology Stack
 
-### 📝 Student Portal
-- Rich text area for complaint description
-- Optional image upload
-- Live AI pipeline visualization during processing
-- Displays all 5 agent results with confidence bars, badges, and routing info
-- Generates a unique tracking ID (e.g., `CPS-A3F8E1-2026`)
-
-### 🛡️ Admin Dashboard
-- Filter by Department / Status / Priority / Flagged
-- Each complaint shows: summary, badges, routing reason, department
-- 🔴 Red border for flagged (Distressed/Angry) complaints
-- Update status: Submitted → In Progress → Resolved
-- Add resolution comments
-- **Export filtered complaints as CSV**
-- **Expandable agent pipeline log** — shows what each agent returned + latency
-
-### 🔍 Student Tracking
-- Look up complaint by tracking ID
-- Full status timeline with timestamps
-- Tabbed view: Timeline / AI Analysis / Comments / Original Text
-- See exactly how AI classified, prioritized, and routed their complaint
-
-### 📊 Analytics
-- **Plotly pie chart**: complaint distribution by category
-- **Plotly bar chart**: priority breakdown
-- **Plotly line chart**: daily submissions (last 7 days)
-- **Plotly grouped bar**: department performance (total vs resolved)
-- **Sentiment distribution** chart
-- **Agent pipeline stats**: avg latency per agent, call counts
-- Quick metrics: total complaints, flagged count, avg confidence, fallback rate
+| Component | Technology |
+| :--- | :--- |
+| **Frontend** | React 18, Vite, Lucide Icons, Vanilla CSS |
+| **Backend** | Python 3.x, Flask, Gunicorn |
+| **AI Layer** | OpenAI GPT-4o-mini (Multi-Agent Chaining) |
+| **Storage** | SQLite (with optimized relational schema) |
+| **Styling** | Custom Glassmorphism Design System |
 
 ---
 
-## 🗄️ Database Schema
+## 📊 Analytics Deep-Dive
 
-| Table | Purpose |
-|-------|---------|
-| `problems` | Main complaints table with all agent outputs |
-| `status_logs` | Full audit trail of every status change |
-| `comments` | Admin resolution comments |
-| `agent_logs` | Every agent call: input, output JSON, latency |
-
----
-
-## 🤖 Agent Details
-
-| # | Agent | Model | Input | Output |
-|---|-------|-------|-------|--------|
-| 1 | Classifier | gpt-4o-mini | Raw text | `{category, confidence}` |
-| 2 | Priority | gpt-4o-mini | Text + category | `{priority, reason}` |
-| 3 | Summarizer | gpt-4o-mini | Raw text | `{summary}` |
-| 4 | Router | gpt-4o-mini | Category + priority + summary | `{department, routing_reason}` |
-| 5 | Sentiment | gpt-4o-mini | Raw text | `{sentiment, flag}` |
-
-### Accuracy
-- **LLM mode (with API key)**: ~90%+ classification accuracy
-- **Fallback mode (no API key)**: ~75%+ using keyword-based heuristics
-
----
-
-## ⚙️ Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Streamlit + Custom CSS (glassmorphism dark theme) |
-| AI | OpenAI GPT-4o-mini (5 specialized agents) |
-| Database | SQLite via `sqlite3` |
-| Charts | Plotly Express + Plotly Graph Objects |
-| Config | python-dotenv |
-
----
-
-## 📋 Known Limitations
-
-1. **SQLite** — single-writer; use PostgreSQL for production scale
-2. **No authentication** — admin dashboard is open; add auth for real deployment
-3. **Image storage** — stored as BLOBs in SQLite; use object storage (S3) for production
-4. **Fallback accuracy** — keyword heuristics are ~75%; real accuracy requires API key
-5. **No email/SMS notifications** — currently in-app toasts only
-6. **Session-based** — Streamlit re-runs on every interaction; consider caching for heavy loads
+The platform includes a specialized analytics dashboard that monitors:
+- **Department Workload**: Real-time resolution rates per administrative unit.
+- **Issue Distribution**: Categorical breakdown of campus-wide problems.
+- **Operational Efficiency**: Average resolution times and AI agent latency.
 
 ---
 
 ## 📄 License
-
-MIT License — built for educational and competition purposes.
+This project is licensed under the MIT License. Built for professional complaint resolution and high-performance AI integration.
