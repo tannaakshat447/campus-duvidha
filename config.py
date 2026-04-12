@@ -1,0 +1,54 @@
+"""
+Campus Duvidha Solver — Central Configuration
+Loads environment variables and defines app-wide constants.
+"""
+
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# ── OpenAI ──────────────────────────────────────────────────────────────────
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+
+# ── Database ────────────────────────────────────────────────────────────────
+DB_PATH = os.getenv("DB_PATH", "campus_solver.db")
+
+# ── Categories ──────────────────────────────────────────────────────────────
+CATEGORIES = [
+    "Infrastructure",
+    "Academic",
+    "Hostel & Mess",
+    "Anti-Ragging",
+    "Administration",
+    "IT & Network",
+]
+
+# ── Departments ─────────────────────────────────────────────────────────────
+DEPARTMENTS = {
+    "Infrastructure":   "Maintenance & Infrastructure Dept.",
+    "Academic":         "Academic Affairs Office",
+    "Hostel & Mess":    "Hostel Warden & Mess Committee",
+    "Anti-Ragging":     "Anti-Ragging Cell",
+    "Administration":   "Registrar / Admin Office",
+    "IT & Network":     "IT Services & Network Dept.",
+    "Needs Manual Review": "Dean of Student Welfare",
+}
+
+# ── Priority Levels ─────────────────────────────────────────────────────────
+PRIORITIES = ["Low", "Medium", "High", "Urgent"]
+
+# ── Sentiments ──────────────────────────────────────────────────────────────
+SENTIMENTS = ["Neutral", "Frustrated", "Distressed", "Angry"]
+
+# ── Status Options ──────────────────────────────────────────────────────────
+STATUSES = ["Submitted", "In Progress", "Resolved"]
+
+# ── Agent confidence threshold ──────────────────────────────────────────────
+CONFIDENCE_THRESHOLD = 0.55
+
+# ── App Metadata ────────────────────────────────────────────────────────────
+APP_TITLE = "🎓 Campus Duvidha Solver"
+APP_SUBTITLE = "AI-Powered Complaint Management System"
+APP_VERSION = "1.0.0"
