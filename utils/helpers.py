@@ -68,191 +68,182 @@ def confidence_bar_color(confidence: float) -> str:
 
 
 def inject_custom_css():
-    """Inject global custom CSS for the Streamlit app."""
+    """Inject global custom CSS for the Streamlit app with Modern Glassmorphism layout."""
     import streamlit as st
     st.markdown("""
     <style>
-    /* ── Import Google Font ───────────────────────────────── */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    /* ── Import Google Fonts ──────────────────────────────── */
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 
     /* ── Global Overrides ─────────────────────────────────── */
+    .stApp {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', sans-serif;
+    }
     .stApp > header {
         background: transparent;
     }
 
     /* ── Sidebar ──────────────────────────────────────────── */
     [data-testid="stSidebar"] {
-        background: #ffffff;
-        border-right: 1px solid #e2e8f0;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.02);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-right: 1px solid rgba(255,255,255,0.4);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.02);
     }
 
-    /* ── Cards ────────────────────────────────────────────── */
+    /* ── Cards (Glassmorphism) ────────────────────────────── */
     .problem-card {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 16px;
         padding: 24px;
-        margin-bottom: 16px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-        transition: all 0.2s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
     .problem-card:hover {
-        border-color: #cbd5e1;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        transform: translateY(-1px);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(31, 38, 135, 0.08);
+        border-color: rgba(255, 255, 255, 0.8);
     }
     .problem-card.flagged {
-        border-color: #fca5a5;
-        box-shadow: 0 0 0 1px #fca5a5, 0 4px 12px rgba(220, 38, 38, 0.08);
+        border: 1px solid rgba(252, 165, 165, 0.8);
+        box-shadow: 0 8px 32px rgba(220, 38, 38, 0.1);
     }
 
     /* ── Badges ───────────────────────────────────────────── */
     .badge {
         display: inline-block;
-        padding: 4px 12px;
-        border-radius: 6px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-family: 'Outfit', sans-serif;
         font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.3px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
         text-transform: uppercase;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        backdrop-filter: blur(4px);
     }
 
     /* ── Metric Cards ─────────────────────────────────────── */
     [data-testid="stMetric"] {
-        background: #ffffff;
-        border: 1px solid #e2e8f0;
-        border-radius: 10px;
-        padding: 16px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+        transition: transform 0.2s ease;
+    }
+    [data-testid="stMetric"]:hover {
+        transform: scale(1.02);
     }
 
     /* ── Agent Pipeline Visual ────────────────────────────── */
     .agent-step {
-        background: #f8fafc;
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
         border-left: 4px solid #0f766e;
-        border-radius: 0 8px 8px 0;
-        padding: 14px 20px;
-        margin-bottom: 10px;
-        border-top: 1px solid #f1f5f9;
-        border-right: 1px solid #f1f5f9;
-        border-bottom: 1px solid #f1f5f9;
-        transition: all 0.2s ease;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        border-top: 1px solid rgba(255,255,255,0.8);
+        border-right: 1px solid rgba(255,255,255,0.8);
+        border-bottom: 1px solid rgba(255,255,255,0.4);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        transition: all 0.3s ease;
     }
     .agent-step:hover {
-        background: #f1f5f9;
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateX(4px);
     }
     .agent-step.success {
         border-left-color: #059669;
     }
-    .agent-step.error {
-        border-left-color: #dc2626;
-    }
-
-    /* ── Confidence Bar ───────────────────────────────────── */
-    .confidence-bar-bg {
-        background: #e2e8f0;
-        border-radius: 8px;
-        height: 8px;
-        overflow: hidden;
-        margin-top: 6px;
-    }
-    .confidence-bar-fill {
-        height: 100%;
-        border-radius: 8px;
-        transition: width 0.8s ease;
-    }
-
-    /* ── Timeline ─────────────────────────────────────────── */
-    .timeline-item {
-        position: relative;
-        padding-left: 28px;
-        margin-bottom: 20px;
-    }
-    .timeline-item::before {
-        content: '';
-        position: absolute;
-        left: 8px;
-        top: 0;
-        bottom: -20px;
-        width: 2px;
-        background: #cbd5e1;
-    }
-    .timeline-item:last-child::before {
-        display: none;
-    }
-    .timeline-item::after {
-        content: '';
-        position: absolute;
-        left: 3px;
-        top: 6px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #0f766e;
-        border: 2px solid #ffffff;
-    }
 
     /* ── Headings ─────────────────────────────────────────── */
     .main-title {
-        color: #0f172a;
-        font-size: 2.2rem;
+        font-family: 'Outfit', sans-serif;
+        background: linear-gradient(135deg, #1e1b4b 0%, #6366f1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2.8rem;
         font-weight: 800;
-        margin-bottom: 4px;
-        letter-spacing: -0.5px;
+        margin-bottom: 8px;
+        letter-spacing: -1px;
     }
     .sub-title {
         color: #64748b;
-        font-size: 1.05rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 1.1rem;
         font-weight: 400;
         margin-bottom: 32px;
     }
 
     /* ── Buttons ──────────────────────────────────────────── */
     .stButton > button {
-        border-radius: 8px;
+        border-radius: 12px;
+        font-family: 'Outfit', sans-serif;
         font-weight: 600;
-        padding: 8px 24px;
-        transition: all 0.2s ease;
+        padding: 10px 24px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
     }
 
-    /* ── Text Area & Inputs ───────────────────────────────── */
+    /* ── Inputs ───────────────────────────────────────────── */
     .stTextArea textarea, .stTextInput input, .stSelectbox select {
-        border-radius: 8px !important;
+        border-radius: 12px !important;
+        background: rgba(255,255,255,0.7) !important;
+        border: 1px solid rgba(0,0,0,0.1) !important;
         font-family: 'Inter', sans-serif;
+        backdrop-filter: blur(4px);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .stTextArea textarea:focus, .stTextInput input:focus {
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 3px rgba(99,102,241,0.15) !important;
     }
 
     /* ── Expander ─────────────────────────────────────────── */
     .streamlit-expanderHeader {
-        background: #f8fafc;
-        border-radius: 8px;
-        color: #334155;
-        border: 1px solid #e2e8f0;
+        background: rgba(255,255,255,0.5);
+        backdrop-filter: blur(8px);
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.5);
     }
-
-    /* ── Tabs ─────────────────────────────────────────────── */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        border-bottom: 1px solid #e2e8f0;
-    }
-    .stTabs [data-baseweb="tab"] {
-        background: transparent;
-        border-radius: 8px 8px 0 0;
-        padding: 10px 20px;
-        font-weight: 500;
-    }
-    .stTabs [aria-selected="true"] {
-        background: #f8fafc !important;
-        color: #0f766e !important;
-        border-top: 1px solid #e2e8f0;
-        border-left: 1px solid #e2e8f0;
-        border-right: 1px solid #e2e8f0;
-    }
-
-    /* ── Divider ──────────────────────────────────────────── */
     hr {
-        border-color: #e2e8f0 !important;
+        border-color: rgba(0,0,0,0.06) !important;
     }
+
+    /* ── Timeline ─────────────────────────────────────────── */
+    .timeline-item { position:relative; padding-left:28px; margin-bottom:20px; }
+    .timeline-item::before { content:''; position:absolute; left:8px; top:0; bottom:-20px; width:2px; background:rgba(99,102,241,0.3); }
+    .timeline-item:last-child::before { display:none; }
+    .timeline-item::after { content:''; position:absolute; left:3px; top:6px; width:12px; height:12px; border-radius:50%; background:#4f46e5; border:2px solid #fff; box-shadow:0 0 0 2px rgba(99,102,241,0.2); }
+    
+    /* ── Animations ───────────────────────────────────────── */
+    @keyframes fadeInSlide {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .problem-card, .agent-step { animation: fadeInSlide 0.5s ease forwards; }
+
+    /* ── Tabs Overrides ───────────────────────────────────── */
+    .stTabs [data-baseweb="tab-list"] { background: transparent; padding: 4px; border-radius: 16px; gap: 8px; border:none; }
+    .stTabs [data-baseweb="tab"] { background: rgba(255,255,255,0.5); border-radius: 12px; padding: 12px 24px; font-weight: 600; font-family:'Outfit', sans-serif; transition:all 0.2s; border: 1px solid rgba(255,255,255,0.2); }
+    .stTabs [aria-selected="true"] { background: rgba(255,255,255,0.95) !important; color: #4f46e5 !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+    /* ── Confidence Bar ───────────────────────────────────── */
+    .confidence-bar-bg { background: rgba(0,0,0,0.05); height: 10px; border-radius: 10px; margin-top: 8px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05); }
+    .confidence-bar-fill { height: 100%; border-radius: 10px; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
     </style>
     """, unsafe_allow_html=True)
 
@@ -274,3 +265,64 @@ def render_confidence_bar(confidence: float) -> str:
         <span style="color:{color}; font-weight:600; font-size:0.85rem;">{pct}%</span>
     </div>
     """
+
+def trigger_professional_success():
+    """Renders a sleek checkmark animation and plays a professional UI chime via Web Audio API."""
+    import streamlit.components.v1 as components
+    html_code = """
+    <style>
+    .success-container {
+        display: flex; justify-content: center; align-items: center; padding: 20px;
+        animation: fadeIn 0.5s ease-out forwards;
+    }
+    .check-icon {
+        width: 80px; height: 80px; border-radius: 50%; display: block;
+        stroke-width: 3; stroke: #10b981; stroke-miterlimit: 10;
+        box-shadow: inset 0px 0px 0px #10b981;
+        animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
+    }
+    .check-icon-circle {
+        stroke-dasharray: 166; stroke-dashoffset: 166; stroke-width: 3; stroke-miterlimit: 10;
+        stroke: #10b981; fill: none; animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+    .check-icon-check {
+        transform-origin: 50% 50%; stroke-dasharray: 48; stroke-dashoffset: 48;
+        stroke: #fff; stroke-width: 3; fill: none; 
+        animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    }
+    @keyframes stroke { 100% { stroke-dashoffset: 0; } }
+    @keyframes scale { 0%, 100% { transform: none; } 50% { transform: scale3d(1.1, 1.1, 1); } }
+    @keyframes fill { 100% { box-shadow: inset 0px 0px 0px 50px #10b981; } }
+    @keyframes fadeIn { 0% { opacity: 0; transform: translateY(-10px); } 100% { opacity: 1; transform: translateY(0); } }
+    </style>
+    <div class="success-container">
+        <svg class="check-icon" viewBox="0 0 52 52">
+            <circle class="check-icon-circle" cx="26" cy="26" r="25" />
+            <path class="check-icon-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+        </svg>
+    </div>
+    <script>
+    setTimeout(function() {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            function playNote(freq, startTime, duration) {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0, startTime);
+                gain.gain.linearRampToValueAtTime(0.15, startTime + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+                osc.start(startTime);
+                osc.stop(startTime + duration);
+            }
+            const now = ctx.currentTime;
+            playNote(783.99, now, 0.4); // G5 
+            playNote(1046.50, now + 0.15, 0.6); // C6 
+        } catch(e) {}
+    }, 100);
+    </script>
+    """
+    components.html(html_code, height=140)

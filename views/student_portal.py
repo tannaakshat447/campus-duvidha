@@ -141,7 +141,9 @@ def render_submit_tab():
         progress_bar.progress(1.0)
         status_placeholder.empty()
 
-        # ── Show Success + Results ──────────────────────────────────
+        st.toast("Complaint submitted successfully! 🎉", icon="✅")
+        from utils.helpers import trigger_professional_success
+        trigger_professional_success()
         st.success(f"✅ Complaint submitted successfully!")
         notify_submission_success(tracking_id)
 
@@ -149,7 +151,7 @@ def render_submit_tab():
             notify_admin_flagged(tracking_id, result.summary, result.sentiment)
 
         # Tracking ID card
-        st.markdown(f'<div style="background:linear-gradient(135deg,#6366f1,#8b5cf6);border-radius:16px;padding:24px;text-align:center;margin:20px 0;"><p style="color:#0f172a;font-size:0.9rem;margin-bottom:8px;">Your Tracking ID</p><h2 style="color:white;font-size:2rem;font-weight:800;letter-spacing:2px;margin:0;">{tracking_id}</h2><p style="color:#334155;font-size:0.85rem;margin-top:8px;">Save this ID to track your complaint status</p></div>', unsafe_allow_html=True)
+        st.markdown(f'<div style="background:linear-gradient(135deg,#4f46e5,#9333ea);border-radius:16px;padding:32px;text-align:center;margin:24px 0;box-shadow:0 8px 32px rgba(79,70,229,0.25);border:1px solid rgba(255,255,255,0.2);"><p style="color:rgba(255,255,255,0.9);font-size:0.95rem;margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Your Tracking ID</p><h2 style="color:white;font-family:\'Outfit\',sans-serif;font-size:2.8rem;font-weight:800;letter-spacing:3px;margin:0;text-shadow:0 2px 4px rgba(0,0,0,0.2);">{tracking_id}</h2><p style="color:rgba(255,255,255,0.8);font-size:0.85rem;margin-top:12px;">Save this ID securely to track your complaint status on the Track Complaint page.</p></div>', unsafe_allow_html=True)
 
         # ── Agent Results Display ───────────────────────────────────
         st.markdown("### 🧠 AI Analysis Results")
@@ -197,21 +199,26 @@ def render_my_complaints_tab():
 
     st.markdown(f"### You have {len(problems)} submitted complaint(s)")
 
+    def jump_to_tracking(tid):
+        st.session_state.force_nav = "🔍 Track Complaint"
+        st.session_state.tracking_input = tid
+
     for prob in problems:
-        st_color = status_color(prob.get("status", ""))
+        is_flagged = prob.get("flagged", 0)
+        card_class = "problem-card flagged" if is_flagged else "problem-card"
+
         p_color = priority_color(prob.get("priority", ""))
+        st_color = status_color(prob.get("status", ""))
+        tid = prob.get("tracking_id", "")
+
+        flag_icon = "🔴" if is_flagged else ""
+        card_html = f'<div class="{card_class}"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><div><span style="color:#4f46e5;font-family:\'Outfit\', sans-serif;font-weight:700;font-size:1.2rem;">{tid}</span></div><div style="display:flex;gap:8px;flex-wrap:wrap;">{render_badge(prob.get("priority","N/A"), p_color)}{render_badge(prob.get("status","N/A"), st_color)} {flag_icon}</div></div><div style="margin-top:12px;"><p style="color:#0f172a;font-size:1.05rem;font-weight:500;margin-bottom:6px;">{prob.get("summary", prob.get("description", "")[:80] + "...")}</p><p style="color:#64748b;font-size:0.85rem;">Department: <strong style="color:#1e293b;">{prob.get("department","Pending")}</strong></p><p style="color:#94a3b8;font-size:0.75rem;margin-top:8px;">Submitted: {format_timestamp(prob.get("created_at",""))}</p></div></div>'
         
-        with st.expander(f"[{prob.get('tracking_id')}] - {prob.get('summary', prob.get('description', '')[:50] + '...')} ({prob.get('status')})"):
-            st.markdown(f"""
-            <div style="display:flex;gap:8px;margin-bottom:12px;">
-                {render_badge(prob.get('status',''), st_color)}
-                {render_badge(prob.get('priority',''), p_color)}
-            </div>
-            """, unsafe_allow_html=True)
+        c1, c2 = st.columns([4, 1])
+        with c1:
+            st.markdown(card_html, unsafe_allow_html=True)
+        with c2:
+            st.markdown("<br><br>", unsafe_allow_html=True)
+            st.button("View Details ➡️", key=f"jump_{tid}", on_click=jump_to_tracking, args=(tid,), use_container_width=True)
             
-            st.markdown(f"**Submitted:** {format_timestamp(prob.get('created_at',''))}")
-            st.markdown(f"**Department:** {prob.get('department', 'Pending')}")
-            st.markdown(f"**Description:**\n{prob.get('description', '')}")
-            
-            # Link to the full tracking page via tracking id
-            st.info(f"To see the full timeline, copy your Tracking ID **{prob.get('tracking_id')}** and use the **Track Complaint** page.")
+        st.markdown("<br>", unsafe_allow_html=True)

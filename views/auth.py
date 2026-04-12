@@ -58,5 +58,7 @@ def render():
                     try:
                         create_user(reg_email, hash_password(reg_password))
                         st.success("Registration successful! You can now log in.")
+                        from utils.helpers import trigger_professional_success
+                        trigger_professional_success()
                     except Exception as e:
                         st.error(f"Error during registration: {e}")

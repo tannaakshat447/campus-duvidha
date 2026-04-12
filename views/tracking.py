@@ -19,15 +19,24 @@ def render():
 
     # ── Search ──────────────────────────────────────────────────────────
     col1, col2 = st.columns([3, 1])
+    
+    # Initialize from portal hyper-jump if available
+    default_tid = st.session_state.pop("tracking_input", "")
+
     with col1:
         tracking_id = st.text_input(
             "Tracking ID",
+            value=default_tid,
             placeholder="e.g. CPS-A3F8E1-2026",
-            key="tracking_input",
+            key="tracking_id_field",
         )
     with col2:
         st.markdown("<br>", unsafe_allow_html=True)
         search_clicked = st.button("🔍 Search", use_container_width=True, key="search_btn")
+
+    # If hyper-jumped, we simulate a search click automatically
+    if default_tid:
+        search_clicked = True
 
     if not search_clicked and not tracking_id:
         st.markdown('<div style="background:#f8fafc; border:1px solid #e2e8f0;border:1px solid rgba(99,102,241,0.2);border-radius:16px;padding:40px;text-align:center;margin-top:40px;"><p style="font-size:3rem;margin-bottom:16px;">🎫</p><p style="color:#475569;font-size:1.1rem;">Enter the tracking ID you received when submitting your complaint.</p><p style="color:#64748b;font-size:0.9rem;margin-top:8px;">Format: CPS-XXXXXX-YYYY</p></div>', unsafe_allow_html=True)
@@ -45,16 +54,45 @@ def render():
         st.markdown('<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:20px;margin-top:16px;"><p style="color:#fca5a5;">Tips:</p><ul style="color:#fca5a5;font-size:0.9rem;"><li>Check for typos in the tracking ID</li><li>The format is CPS-XXXXXX-YYYY (e.g., CPS-A3F8E1-2026)</li><li>Make sure you\'re using the correct ID from your submission</li></ul></div>', unsafe_allow_html=True)
         return
 
+    # ── Export ──────────────────────────────────────────────────────────
+    transcript_text = f"""
+======================================================
+OFFICIAL COMPLAINT TRANSCRIPT - CAMPUS DUVIDHA SOLVER
+======================================================
+Tracking ID: {problem.get("tracking_id")}
+Submitted By: {problem.get("student_name")}
+Submitted At: {format_timestamp(problem.get("created_at"))}
+
+-- STATUS SUMMARY --
+Status: {problem.get("status")}
+Priority: {problem.get("priority")} ({problem.get("priority_reason")})
+Department: {problem.get("department")}
+Flagged: {"YES" if problem.get("flagged") else "NO"}
+
+-- ORIGINAL DESCRIPTION --
+{problem.get("description")}
+
+-- AI ANALYSIS OVERVIEW --
+Category: {problem.get("category")}
+Sentiment: {problem.get("sentiment")}
+Summary: {problem.get("summary")}
+======================================================
+    """
+    
+    col_h1, col_h2 = st.columns([5,2])
+    with col_h2:
+        st.download_button("📄 Download Transcript", data=transcript_text, file_name=f"Transcript_{tracking_id}.txt", mime="text/plain", use_container_width=True)
+
     # ── Status Header ───────────────────────────────────────────────────
     st_color = status_color(problem.get("status", ""))
     p_color = priority_color(problem.get("priority", ""))
     s_color = sentiment_color(problem.get("sentiment", ""))
 
-    header_html = f'<div class="problem-card" style="border-left:4px solid {st_color};"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><div><span style="color:#0f766e;font-weight:700;font-size:1.3rem;">{problem.get("tracking_id","")}</span><span style="color:#64748b;margin-left:12px;">by {problem.get("student_name","Anonymous")}</span></div><div style="display:flex;gap:8px;">{render_badge(problem.get("status",""), st_color)}{render_badge(problem.get("priority",""), p_color)}</div></div><p style="color:#0f172a;font-size:1.1rem;font-weight:500;margin-top:16px;">{problem.get("summary","")}</p><p style="color:#64748b;font-size:0.85rem;margin-top:8px;">Submitted: {format_timestamp(problem.get("created_at",""))} &nbsp;|&nbsp; Last updated: {format_timestamp(problem.get("updated_at",""))}</p></div>'
+    header_html = f'<div class="problem-card" style="border-left:4px solid {st_color};"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;"><div><span style="color:#4f46e5;font-weight:800;font-size:1.4rem;">{problem.get("tracking_id","")}</span><span style="color:#64748b;margin-left:12px;">by {problem.get("student_name","Anonymous")}</span></div><div style="display:flex;gap:8px;">{render_badge(problem.get("status",""), st_color)}{render_badge(problem.get("priority",""), p_color)}</div></div><p style="color:#0f172a;font-size:1.1rem;font-weight:500;margin-top:16px;">{problem.get("summary","")}</p><p style="color:#64748b;font-size:0.85rem;margin-top:8px;">Submitted: {format_timestamp(problem.get("created_at",""))} &nbsp;|&nbsp; Last updated: {format_timestamp(problem.get("updated_at",""))}</p></div>'
     st.markdown(header_html, unsafe_allow_html=True)
 
     # ── Tabs ────────────────────────────────────────────────────────────
-    tab1, tab2, tab3, tab4 = st.tabs(["📜 Timeline", "🤖 AI Analysis", "💬 Comments", "📄 Original"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📜 Timeline", "🤖 AI Analysis", "💬 Discussion", "📄 Original"])
 
     # ── Tab 1: Timeline ─────────────────────────────────────────────────
     with tab1:
@@ -90,15 +128,31 @@ def render():
         if problem.get("used_fallback"):
             st.markdown('<div class="agent-step" style="border-left-color:#f59e0b;"><strong style="color:#f59e0b;">⚠️ Processed with fallback heuristics</strong><br><span style="color:#fcd34d;font-size:0.85rem;">AI agents were unavailable; keyword-based analysis was used.</span></div>', unsafe_allow_html=True)
 
-    # ── Tab 3: Comments ─────────────────────────────────────────────────
+    # ── Tab 3: Comments (Two-Way Discussion) ────────────────────────────
     with tab3:
         comments = get_comments(problem["id"])
         if not comments:
-            st.info("No comments yet. The admin will post updates here.")
+            st.info("No comments yet. Start the discussion below!")
         else:
             for c in comments:
-                c_html = f'<div style="background:#f8fafc; border:1px solid #e2e8f0;padding:14px;border-radius:10px;margin-bottom:10px;border-left:3px solid #6366f1;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:#0f766e;font-weight:600;">{c.get("posted_by","Admin")}</span><span style="color:#64748b;font-size:0.8rem;">{format_timestamp(c.get("posted_at",""))}</span></div><p style="color:#334155;margin-top:8px;font-size:0.95rem;">{c.get("comment","")}</p></div>'
+                sender = c.get("posted_by","System")
+                border_color = "#3b82f6" if sender == "Student" else "#10b981"
+                
+                c_html = f'<div style="background:#f8fafc; border:1px solid #e2e8f0;padding:14px;border-radius:10px;margin-bottom:10px;border-left:4px solid {border_color};"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:#1e293b;font-weight:700;">{sender}</span><span style="color:#64748b;font-size:0.8rem;">{format_timestamp(c.get("posted_at",""))}</span></div><p style="color:#334155;margin-top:8px;font-size:0.95rem;">{c.get("comment","")}</p></div>'
                 st.markdown(c_html, unsafe_allow_html=True)
+
+        st.markdown("---")
+        from database.models import insert_comment
+        
+        reply_text = st.text_area("Reply to this complaint", placeholder="Provide extra details or ask a question...")
+        if st.button("💬 Reply", key="student_reply"):
+            if reply_text.strip():
+                insert_comment(problem["id"], reply_text.strip(), "Student")
+                st.success("Reply posted!")
+                st.rerun()
+            else:
+                st.warning("Please enter a reply.")
+
 
     # ── Tab 4: Original ─────────────────────────────────────────────────
     with tab4:

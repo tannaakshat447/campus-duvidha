@@ -25,16 +25,16 @@ inject_custom_css()
 with st.sidebar:
     st.markdown(
         """
-        <div style="text-align:center; padding: 20px 0 10px;">
-            <p style="font-size:2.5rem; margin-bottom:0;">🎓</p>
-            <h2 style="background: linear-gradient(90deg, #818cf8, #c084fc);
+        <div style="text-align:center; padding: 10px 0 20px;">
+            <p style="font-size:3rem; margin-bottom:0; text-shadow: 0 4px 12px rgba(99,102,241,0.3);">🎓</p>
+            <h2 style="font-family:'Outfit', sans-serif; background: linear-gradient(135deg, #4f46e5, #9333ea);
                        -webkit-background-clip: text;
                        -webkit-text-fill-color: transparent;
-                       font-size:1.4rem; font-weight:800; margin-top:4px;">
-                Campus Duvidha Solver
+                       font-size:1.6rem; font-weight:800; margin-top:4px; margin-bottom:4px; letter-spacing: -0.5px;">
+                Campus Duvidha<br>Solver
             </h2>
-            <p style="color:#7c83db; font-size:0.8rem; margin-top:-8px;">
-                AI-Powered Complaint Management
+            <p style="color:#64748b; font-size:0.8rem; margin-top:0px; font-weight: 500;">
+                AI-Powered Management
             </p>
         </div>
         """,
@@ -43,15 +43,21 @@ with st.sidebar:
 
     st.markdown("---")
 
+    nav_options = [
+        "📝 Student Portal",
+        "🛡️ Admin Dashboard",
+        "🔍 Track Complaint",
+        "📊 Analytics",
+    ]
+
+    # Intercept programmatic navigation
+    if "force_nav" in st.session_state:
+        st.session_state.nav_radio = st.session_state.force_nav
+        del st.session_state.force_nav
+
     page = st.radio(
         "Navigate",
-        [
-            "📝 Student Portal",
-            "🛡️ Admin Dashboard",
-            "🔍 Track Complaint",
-            "📊 Analytics",
-        ],
-        index=0,
+        nav_options,
         key="nav_radio",
     )
 

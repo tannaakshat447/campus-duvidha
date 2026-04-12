@@ -114,8 +114,10 @@ def get_all_problems(
     status: Optional[str] = None,
     priority: Optional[str] = None,
     flagged_only: bool = False,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
 ) -> List[Dict[str, Any]]:
-    """Fetch problems with optional filters."""
+    """Fetch problems with optional filters and pagination."""
     conn = get_connection()
     query = "SELECT * FROM problems WHERE 1=1"
     params: list = []
@@ -133,6 +135,14 @@ def get_all_problems(
         query += " AND flagged = 1"
 
     query += " ORDER BY created_at DESC"
+    
+    if limit is not None:
+        query += " LIMIT ?"
+        params.append(limit)
+    if offset is not None:
+        query += " OFFSET ?"
+        params.append(offset)
+
     rows = conn.execute(query, params).fetchall()
     conn.close()
     return [dict(r) for r in rows]

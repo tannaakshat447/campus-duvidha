@@ -12,6 +12,12 @@ load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 
+# ── SMTP Email Config ───────────────────────────────────────────────────────
+SMTP_SENDER_EMAIL = os.getenv("SMTP_SENDER_EMAIL", "")
+SMTP_SENDER_PASSWORD = os.getenv("SMTP_SENDER_PASSWORD", "")
+SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+SMTP_PORT = int(os.getenv("SMTP_PORT", "587"))
+
 # ── Database ────────────────────────────────────────────────────────────────
 DB_PATH = os.getenv("DB_PATH", "campus_solver.db")
 

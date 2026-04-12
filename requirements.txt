@@ -3,3 +3,6 @@ openai
 python-dotenv
 plotly
 pillow
+flask
+flask-cors
+gunicorn

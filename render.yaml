@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: campus-duvidha-solver
+    env: python
+    buildCommand: "npm install --prefix frontend && npm run build --prefix frontend && pip install -r requirements.txt"
+    startCommand: "gunicorn server:app --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ADMIN_PIN
+        value: "Admin@123"
+      - key: SMTP_SENDER_EMAIL
+        sync: false
+      - key: SMTP_SENDER_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: "campus_solver.db"
+      - key: PORT
+        value: "10000"
