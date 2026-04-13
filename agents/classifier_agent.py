@@ -21,23 +21,23 @@ RULES:
 3. If the complaint is ambiguous or doesn't clearly fit any category, pick the closest
    match but set confidence below 0.55.
 4. Consider these mappings:
-   - Wi-Fi, internet, computer lab, software, email → "IT & Network"
-   - Classroom, teacher, exam, grades, syllabus, attendance → "Academic"
-   - Hostel room, mess food, water, laundry, roommate → "Hostel & Mess"
-   - Ragging, bullying, harassment, intimidation, threats → "Anti-Ragging"
-   - Building, road, parking, lighting, furniture, AC, fan → "Infrastructure"
-   - Fee, admission, certificate, ID card, library card → "Administration"
+   - Wi-Fi, internet, computer lab, software, email → "Other"
+   - Classroom, teacher, exam, grades, syllabus, attendance → "Academic issues"
+   - Bathroom, toilet, hygiene, cleaning, housekeeping → "Bathroom and hygiene"
+   - Ragging, bullying, harassment, security, safety, threats → "Anti ragging and safety"
+   - Building, road, furniture, AC, fan, maintenance → "Infrastructure/Maintenance"
+   - Mess food, canteen, food quality, water supply in mess → "Mess and food quality"
 5. Return ONLY the JSON object. No explanation, no markdown fences.
 
 EXAMPLES:
-Input: "The Wi-Fi in Block C has been down for 3 days"
-Output: {{"category": "IT & Network", "confidence": 0.95}}
+Input: "The toilet on the 2nd floor is clogged and hasn't been cleaned."
+Output: {{"category": "Bathroom and hygiene", "confidence": 0.95}}
 
-Input: "bhai 3rd floor pe paani nahi aata yaar fix karo"
-Output: {{"category": "Hostel & Mess", "confidence": 0.88}}
+Input: "Senior students are blocking the entrance to the hostel at night."
+Output: {{"category": "Anti ragging and safety", "confidence": 0.88}}
 
-Input: "Some seniors forced us to do push-ups at midnight"
-Output: {{"category": "Anti-Ragging", "confidence": 0.97}}
+Input: "The dal in the mess today had insects in it."
+Output: {{"category": "Mess and food quality", "confidence": 0.97}}
 """
 
 

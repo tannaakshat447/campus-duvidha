@@ -19,8 +19,12 @@ const PRIORITY_META = {
 };
 
 const CATEGORY_ICONS = {
-    'Infrastructure': '🏗️', 'Academic': '📚', 'Hostel & Mess': '🏠',
-    'Anti-Ragging': '🛡️', 'Administration': '📋', 'IT & Network': '💻',
+    'Bathroom and hygiene': '🧼', 
+    'Anti ragging and safety': '🛡️', 
+    'Mess and food quality': '🍲',
+    'Academic issues': '📚', 
+    'Infrastructure/Maintenance': '🏗️', 
+    'Other': '📋',
     'Needs Manual Review': '🔍',
 };
 
