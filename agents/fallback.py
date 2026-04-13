@@ -9,38 +9,44 @@ from config import CATEGORIES, DEPARTMENTS
 # ── Keyword maps ────────────────────────────────────────────────────────────
 
 CATEGORY_KEYWORDS = {
-    "Bathroom and hygiene": [
-        "bathroom", "toilet", "washroom", "clean", "cleaning", "hygiene",
-        "stink", "smell", "dirty", "water", "leak", "plumbing", "soap",
-        "sanitation", "housekeeping", "janitor", "sweep", "mop",
+    "Infrastructure": [
+        "building", "road", "parking", "light", "lighting", "furniture",
+        "chair", "desk", "bench", "ac", "air conditioning", "fan",
+        "elevator", "lift", "construction", "leak", "roof", "wall",
+        "broken", "repair", "maintenance", "classroom", "door", "window",
+        "paint", "ground", "garden", "drainage",
     ],
-    "Anti ragging and safety": [
-        "ragging", "bully", "bullying", "harass", "harassment",
-        "senior", "threat", "threaten", "intimidat", "assault",
-        "force", "forced", "abuse", "scare", "scared", "afraid", "beat",
-        "security", "guard", "safe", "safety", "unsafe", "dark", "light",
-    ],
-    "Mess and food quality": [
-        "mess", "food", "dal", "roti", "rice", "khana", "insect",
-        "cockroach", "dirty", "unhygienic", "taste", "quality",
-        "menu", "canteen", "lunch", "dinner", "breakfast", "plate",
-    ],
-    "Academic issues": [
+    "Academic": [
         "teacher", "professor", "faculty", "exam", "grade", "marks",
         "syllabus", "attendance", "lecture", "class", "lab", "assignment",
         "project", "deadline", "timetable", "schedule", "course",
         "semester", "result", "viva", "practical", "plagiarism",
     ],
-    "Infrastructure/Maintenance": [
-        "building", "road", "parking", "furniture", "chair", "desk",
-        "bench", "ac", "air conditioning", "fan", "elevator", "lift",
-        "construction", "roof", "wall", "broken", "repair", "maintenance",
-        "classroom", "door", "window", "paint", "ground", "garden",
+    "Hostel & Mess": [
+        "hostel", "mess", "food", "water", "laundry", "room",
+        "roommate", "warden", "curfew", "menu", "canteen", "hygiene",
+        "pest", "cockroach", "insect", "rat", "dirty", "clean",
+        "bathroom", "toilet", "shower", "geyser", "hot water",
+        "mattress", "bed", "pillow", "dal", "roti", "rice",
+        "paani", "khana", "ganda",
     ],
-    "Other": [
+    "Anti-Ragging": [
+        "ragging", "bully", "bullying", "harass", "harassment",
+        "senior", "threat", "threaten", "intimidat", "assault",
+        "force", "forced", "pushup", "push-up", "abuse",
+        "humiliat", "scare", "scared", "afraid", "beat",
+    ],
+    "Administration": [
+        "fee", "fees", "admission", "certificate", "id card",
+        "library", "scholarship", "refund", "document", "transfer",
+        "registrar", "form", "verification", "receipt", "payment",
+        "transcript", "degree", "convocation",
+    ],
+    "IT & Network": [
         "wifi", "wi-fi", "internet", "network", "lan", "computer",
-        "software", "email", "portal", "erp", "lms", "fee", "admission",
-        "certificate", "id card", "library", "scholarship", "refund",
+        "lab", "software", "email", "portal", "erp", "lms",
+        "printer", "password", "login", "server", "website",
+        "online", "download", "upload", "slow",
     ],
 }
 
@@ -110,8 +116,8 @@ def classify_fallback(complaint_text: str) -> dict:
 
 def priority_fallback(complaint_text: str, category: str) -> dict:
     """Keyword-based priority assignment."""
-    if category == "Anti ragging and safety":
-        return {"priority": "Urgent", "reason": "Anti-ragging and safety complaints are always Urgent."}
+    if category == "Anti-Ragging":
+        return {"priority": "Urgent", "reason": "Anti-ragging complaints are always Urgent."}
 
     for prio in ["Urgent", "High", "Medium"]:
         if _match_score(complaint_text, PRIORITY_KEYWORDS[prio]) > 0:

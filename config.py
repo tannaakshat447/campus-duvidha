@@ -23,23 +23,23 @@ DB_PATH = os.getenv("DB_PATH", "campus_solver.db")
 
 # ── Categories ──────────────────────────────────────────────────────────────
 CATEGORIES = [
-    "Bathroom and hygiene",
-    "Anti ragging and safety",
-    "Mess and food quality",
-    "Academic issues",
-    "Infrastructure/Maintenance",
-    "Other",
+    "Infrastructure",
+    "Academic",
+    "Hostel & Mess",
+    "Anti-Ragging",
+    "Administration",
+    "IT & Network",
 ]
 
 # ── Departments ─────────────────────────────────────────────────────────────
 DEPARTMENTS = {
-    "Bathroom and hygiene":     "Sanitation & Hygiene Dept.",
-    "Anti ragging and safety":  "Anti-Ragging & Security Cell",
-    "Mess and food quality":    "Mess & Catering Committee",
-    "Academic issues":          "Academic Affairs Office",
-    "Infrastructure/Maintenance": "Maintenance & Infrastructure Dept.",
-    "Other":                    "Dean of Student Welfare",
-    "Needs Manual Review":      "Dean of Student Welfare",
+    "Infrastructure":   "Maintenance & Infrastructure Dept.",
+    "Academic":         "Academic Affairs Office",
+    "Hostel & Mess":    "Hostel Warden & Mess Committee",
+    "Anti-Ragging":     "Anti-Ragging Cell",
+    "Administration":   "Registrar / Admin Office",
+    "IT & Network":     "IT Services & Network Dept.",
+    "Needs Manual Review": "Dean of Student Welfare",
 }
 
 # ── Priority Levels ─────────────────────────────────────────────────────────

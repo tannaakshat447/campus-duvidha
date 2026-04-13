@@ -12,29 +12,33 @@ from config import OPENAI_API_KEY, OPENAI_MODEL, DEPARTMENTS
 DEPT_DESC = """
 AVAILABLE DEPARTMENTS AND THEIR MANDATES:
 
-1. "Sanitation & Hygiene Dept."
-   — Handles: bathroom cleaning, toilet repairs, hygiene issues, pest control,
-     waste management, general housekeeping, sanitation in classrooms and hostels.
+1. "Maintenance & Infrastructure Dept."
+   — Handles: building repairs, furniture, AC/fans, plumbing (non-hostel),
+     road/parking, lighting, campus grounds, elevators, classroom facilities.
 
-2. "Anti-Ragging & Security Cell"
-   — Handles: ALL ragging cases, bullying, harassment, safety concerns, theft,
-     security guard behavior, campus lighting, gate control, nighttime safety.
-
-3. "Mess & Catering Committee"
-   — Handles: mess food quality, kitchen hygiene, food contamination,
-     mess timing, menu disputes, canteen services, drinking water in mess.
-
-4. "Academic Affairs Office"
+2. "Academic Affairs Office"
    — Handles: teaching quality, syllabus issues, examination concerns, grades,
      attendance disputes, faculty complaints, academic scheduling, lab equipment.
 
-5. "Maintenance & Infrastructure Dept."
-   — Handles: building repairs, furniture, AC/fans, plumbing (non-bathroom),
-     road/parking repairs, elevators, classroom infrastructure, gym equipment.
+3. "Hostel Warden & Mess Committee"
+   — Handles: hostel room issues, roommate conflicts, mess food quality,
+     water supply in hostels, laundry, hostel security, mess timing, menu.
 
-6. "Dean of Student Welfare"
-   — Handles: fee issues, administration delays, certificates, ID cards,
-     IT/WiFi issues, and anything that doesn't fit the specific mandates above.
+4. "Anti-Ragging Cell"
+   — Handles: ALL ragging, bullying, harassment, intimidation, threats by seniors,
+     mental harassment, physical abuse. This takes absolute priority.
+
+5. "Registrar / Admin Office"
+   — Handles: fees, admissions, certificates, ID cards, library memberships,
+     scholarships, document verification, transfer requests.
+
+6. "IT Services & Network Dept."
+   — Handles: Wi-Fi, internet, LAN, computer labs, email/portal access,
+     software licenses, printer issues, ERP/LMS problems.
+
+7. "Dean of Student Welfare"
+   — Handles: anything that doesn't clearly fit above, cross-department issues,
+     general welfare, mental health referrals, complaints needing manual review.
 """
 
 SYSTEM_PROMPT = f"""You are the Router Agent in a campus complaint management system.
@@ -52,17 +56,17 @@ OUTPUT FORMAT:
 
 RULES:
 1. Match the complaint to the most appropriate department based on category and content.
-2. If category is "Anti ragging and safety", ALWAYS route to "Anti-Ragging & Security Cell".
+2. If category is "Anti-Ragging", ALWAYS route to "Anti-Ragging Cell".
 3. If category is "Needs Manual Review", route to "Dean of Student Welfare".
 4. If a complaint spans two departments, pick the PRIMARY one and mention the overlap in routing_reason.
 5. Department names must EXACTLY match the names listed above.
 
 EXAMPLES:
-Input: {{"category": "Other", "priority": "High", "summary": "Wi-Fi outage in Block C for 3 days."}}
-Output: {{"department": "Dean of Student Welfare", "routing_reason": "IT and WiFi issues are handled by the Dean of Student Welfare office."}}
+Input: {{"category": "IT & Network", "priority": "High", "summary": "Wi-Fi outage in Block C for 3 days."}}
+Output: {{"department": "IT Services & Network Dept.", "routing_reason": "Wi-Fi connectivity issues fall under IT Services jurisdiction."}}
 
-Input: {{"category": "Anti ragging and safety", "priority": "Urgent", "summary": "Seniors forcing freshers to perform physical tasks at night."}}
-Output: {{"department": "Anti-Ragging & Security Cell", "routing_reason": "All ragging and safety complaints are mandatorily routed to the Anti-Ragging & Security Cell."}}
+Input: {{"category": "Anti-Ragging", "priority": "Urgent", "summary": "Seniors forcing freshers to perform physical tasks at night."}}
+Output: {{"department": "Anti-Ragging Cell", "routing_reason": "All ragging complaints are mandatorily routed to the Anti-Ragging Cell."}}
 """
 
 
@@ -104,9 +108,9 @@ def route(category: str, priority: str, summary: str) -> dict:
             dept = DEPARTMENTS.get(category, "Dean of Student Welfare")
             result = {"department": dept, "routing_reason": "Routed based on category mapping."}
 
-    # Enforce hard rule: Anti-Ragging always goes to Anti-Ragging & Security Cell
-    if category == "Anti ragging and safety":
-        result["department"] = "Anti-Ragging & Security Cell"
+    # Enforce hard rule: Anti-Ragging always goes to Anti-Ragging Cell
+    if category == "Anti-Ragging":
+        result["department"] = "Anti-Ragging Cell"
 
     # Enforce hard rule: Needs Manual Review goes to Dean
     if category == "Needs Manual Review":

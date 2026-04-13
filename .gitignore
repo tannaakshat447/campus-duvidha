@@ -6,12 +6,7 @@ venv/
 .env
 
 # Database
-campus_solver.db
 *.db
-!campus_solver.db  # Only if we wanted to force it, but usually we ignore it
-# Actually, just ignore all db files
-*.db
-campus_solver_backup_*
 
 # Frontend
 frontend/node_modules/
