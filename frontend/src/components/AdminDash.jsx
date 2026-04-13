@@ -153,9 +153,13 @@ export default function AdminDash() {
                                     <option value="Resolved">Resolved</option>
                                 </optgroup>
                                 <optgroup label="Department">
-                                    <option value="Maintenance & Infrastructure Dept.">Infrastructure</option>
-                                    <option value="Academic Affairs Office">Academic</option>
+                                    <option value="Maintenance & Infrastructure Dept.">Maintenance & Infrastructure</option>
+                                    <option value="Academic Affairs Office">Academic Affairs</option>
                                     <option value="Hostel Warden & Mess Committee">Hostel & Mess</option>
+                                    <option value="Anti-Ragging Cell">Anti-Ragging Cell</option>
+                                    <option value="Registrar / Admin Office">Registrar / Admin Office</option>
+                                    <option value="IT Services & Network Dept.">IT & Network</option>
+                                    <option value="Dean of Student Welfare">Manual Review (Dean)</option>
                                 </optgroup>
                             </select>
                         </div>
